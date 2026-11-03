@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://psuazovumrjdghhkwqmp.supabase.co wss://psuazovumrjdghhkwqmp.supabase.co; img-src 'self' data:; base-uri 'self'; form-action 'self'; object-src 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="description" content="SCOF - Sistema de Controlo Operacional e Financeiro para MPME em Moçambique.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%23141210'/%3E%3Ctext x='32' y='43' font-family='Georgia' font-size='30' font-weight='700' text-anchor='middle' fill='%23F4C21B'%3ES%3C/text%3E%3C/svg%3E">
+<style>[hidden]{display:none!important}</style>
+<title>SCOF</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=DM+Serif+Display:ital@0;1&family=Archivo:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Kalam:wght@700&display=swap">
+<style>
+/* SCOF montra · dois estilos × dois modos.
+   Letreiro  = parede pintada de Maputo + caderno do comerciante (amarelo/preto: advertência, Heller).
+   Confiança = azul, verde e ouro (o acorde da confiança, Heller), títulos em serifa sóbria.
+   Cada estilo tem modo claro e escuro; por defeito segue o tema do aparelho. */
+:root{
+  /* Letreiro · claro */
+  --fundo:#FFFDF6; --texto:#141210; --sup:#FFFDF6; --sup2:#F6F1E2; --linha:#D9D2BF; --traco:#141210; --sombra:#141210;
+  --cinza:#5A554B; --hero:#F4C21B; --hero-txt:#141210; --hero-destaque:#D23A2A; --pontos:rgba(20,18,16,.35);
+  --banda:#141210; --banda-txt:#FFFDF6; --banda-sub:#CFC8B8; --acento:#F4C21B; --acento-txt:#141210;
+  --ok:#0B6E4F; --ok-claro:#7FD3B0; --perda:#D23A2A; --azul:#1D4E89; --etiqueta2:#F4C21B; --margem:#E7A3A0;
+  --pedido:#0B6E4F; --pedido-txt:#FFFFFF; --pedido-sub:#D8EFE5; --pedido-acento:#F4C21B;
+  --btn:#141210; --btn-txt:#F4C21B; --faixa-a:#F4C21B; --faixa-b:#0B6E4F; --faixa-fundo:#141210;
+  --titulo:"Alfa Slab One","Rockwell","Roboto Slab",Georgia,serif; --titulo-peso:400; --titulo-esp:-.01em;
+  --corpo:"Archivo","Segoe UI",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --mao:"Kalam","Comic Sans MS",cursive; --raio:3px;
+}
+/* Letreiro · escuro ("parede à noite": letras amarelas pintadas sobre parede escura) */
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]):not([data-modo="claro"]){
+  --fundo:#12110F; --texto:#F3EEE2; --sup:#1C1A17; --sup2:#24211C; --linha:#3A352C; --traco:#F3EEE2; --sombra:#000000;
+  --cinza:#B7AE9C; --hero:#0B0A09; --hero-txt:#F4C21B; --hero-destaque:#FF6B57; --pontos:rgba(244,194,27,.18);
+  --banda:#000000; --banda-txt:#F3EEE2; --banda-sub:#B7AE9C; --acento:#F4C21B; --acento-txt:#141210;
+  --ok:#2FBF8A; --ok-claro:#7FD3B0; --perda:#FF6B57; --azul:#7FB0EA; --etiqueta2:#F4C21B; --margem:#7A3B36;
+  --pedido:#0A3D2C; --pedido-txt:#F3EEE2; --pedido-sub:#B9DCCB; --pedido-acento:#F4C21B;
+  --btn:#F4C21B; --btn-txt:#141210; --faixa-a:#F4C21B; --faixa-b:#2FBF8A; --faixa-fundo:#000000; color-scheme:dark}}
+:root[data-theme="dark"]:not([data-modo="claro"]),:root[data-modo="escuro"]{
+  --fundo:#12110F; --texto:#F3EEE2; --sup:#1C1A17; --sup2:#24211C; --linha:#3A352C; --traco:#F3EEE2; --sombra:#000000;
+  --cinza:#B7AE9C; --hero:#0B0A09; --hero-txt:#F4C21B; --hero-destaque:#FF6B57; --pontos:rgba(244,194,27,.18);
+  --banda:#000000; --banda-txt:#F3EEE2; --banda-sub:#B7AE9C; --acento:#F4C21B; --acento-txt:#141210;
+  --ok:#2FBF8A; --ok-claro:#7FD3B0; --perda:#FF6B57; --azul:#7FB0EA; --etiqueta2:#F4C21B; --margem:#7A3B36;
+  --pedido:#0A3D2C; --pedido-txt:#F3EEE2; --pedido-sub:#B9DCCB; --pedido-acento:#F4C21B;
+  --btn:#F4C21B; --btn-txt:#141210; --faixa-a:#F4C21B; --faixa-b:#2FBF8A; --faixa-fundo:#000000; color-scheme:dark}
+
+/* Confiança · claro */
+:root[data-estilo="confianca"]{
+  --fundo:#F5F7F6; --texto:#10233A; --sup:#FFFFFF; --sup2:#EEF3F1; --linha:#D3DDE3; --traco:#10233A; --sombra:rgba(16,35,58,.18);
+  --cinza:#4F6072; --hero:#0B5A43; --hero-txt:#FFFFFF; --hero-destaque:#F0C566; --pontos:rgba(255,255,255,.10);
+  --banda:#10233A; --banda-txt:#EAF1F6; --banda-sub:#B6C6D4; --acento:#C9A13B; --acento-txt:#10233A;
+  --ok:#0B6E4F; --ok-claro:#8FD9BC; --perda:#C0392B; --azul:#1D4E89; --etiqueta2:#E9F0F7; --margem:#9DB7D6;
+  --pedido:#1D4E89; --pedido-txt:#FFFFFF; --pedido-sub:#D5E3F2; --pedido-acento:#F0C566;
+  --btn:#C9A13B; --btn-txt:#10233A; --faixa-a:#C9A13B; --faixa-b:#1D4E89; --faixa-fundo:#0B5A43;
+  --titulo:"DM Serif Display",Georgia,"Times New Roman",serif; --titulo-peso:400; --titulo-esp:0; --raio:10px; color-scheme:light}
+@media (prefers-color-scheme: dark){:root[data-estilo="confianca"]:not([data-theme="light"]):not([data-modo="claro"]){
+  --fundo:#0C1622; --texto:#E6EDF3; --sup:#132131; --sup2:#182A3D; --linha:#26394D; --traco:#C9D6E2; --sombra:rgba(0,0,0,.5);
+  --cinza:#9DB0C2; --hero:#0A2E25; --hero-txt:#F2F6F4; --hero-destaque:#F0C566; --pontos:rgba(240,197,102,.08);
+  --banda:#070E16; --banda-txt:#E6EDF3; --banda-sub:#9DB0C2; --acento:#E2B44A; --acento-txt:#0C1622;
+  --ok:#3CC495; --ok-claro:#8FD9BC; --perda:#F07167; --azul:#8DB8EC; --etiqueta2:#1B3048; --margem:#36557A;
+  --pedido:#11304F; --pedido-txt:#E6EDF3; --pedido-sub:#B8CCE0; --pedido-acento:#F0C566;
+  --btn:#E2B44A; --btn-txt:#0C1622; --faixa-a:#E2B44A; --faixa-b:#3C78BD; --faixa-fundo:#0A2E25; color-scheme:dark}}
+:root[data-estilo="confianca"][data-theme="dark"]:not([data-modo="claro"]),:root[data-estilo="confianca"][data-modo="escuro"]{
+  --fundo:#0C1622; --texto:#E6EDF3; --sup:#132131; --sup2:#182A3D; --linha:#26394D; --traco:#C9D6E2; --sombra:rgba(0,0,0,.5);
+  --cinza:#9DB0C2; --hero:#0A2E25; --hero-txt:#F2F6F4; --hero-destaque:#F0C566; --pontos:rgba(240,197,102,.08);
+  --banda:#070E16; --banda-txt:#E6EDF3; --banda-sub:#9DB0C2; --acento:#E2B44A; --acento-txt:#0C1622;
+  --ok:#3CC495; --ok-claro:#8FD9BC; --perda:#F07167; --azul:#8DB8EC; --etiqueta2:#1B3048; --margem:#36557A;
+  --pedido:#11304F; --pedido-txt:#E6EDF3; --pedido-sub:#B8CCE0; --pedido-acento:#F0C566;
+  --btn:#E2B44A; --btn-txt:#0C1622; --faixa-a:#E2B44A; --faixa-b:#3C78BD; --faixa-fundo:#0A2E25; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--fundo);color:var(--texto);font:17px/1.55 var(--corpo)}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{margin:0;text-wrap:balance}
+p{margin:0}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--azul);outline-offset:3px}
+@media (prefers-reduced-motion:no-preference){body,header,section,.parede,.talao,.etiqueta,.ramo,.slip,.razao{transition:background-color .25s,color .25s,border-color .25s}}
+
+.faixa{height:28px;background-color:var(--faixa-fundo);
+  background-image:linear-gradient(135deg,var(--faixa-a) 25%,transparent 25%),linear-gradient(225deg,var(--faixa-a) 25%,transparent 25%),
+    linear-gradient(315deg,var(--faixa-b) 25%,transparent 25%),linear-gradient(45deg,var(--faixa-b) 25%,transparent 25%);
+  background-size:28px 28px;background-position:0 0,0 0,14px 14px,14px 14px}
+.faixa.fina{height:12px;background-size:12px 12px;background-position:0 0,0 0,6px 6px,6px 6px}
+:root[data-estilo="confianca"] .faixa{height:6px;background-size:100% 100%;background-position:0 0;background-image:linear-gradient(90deg,var(--faixa-a) 0 33%,var(--faixa-b) 33% 66%,var(--ok) 66%)}
+:root[data-estilo="confianca"] .faixa.fina{height:4px}
+
+/* topo */
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--banda);color:var(--acento)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--banda)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px 16px;padding-block:10px;flex-wrap:wrap}
+.marca{font:var(--titulo-peso) 1.7rem/1 var(--titulo);letter-spacing:.04em;text-decoration:none;color:var(--acento)}
+header nav{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+header nav a{color:var(--banda-txt);text-decoration:none;font-weight:700;font-size:.9rem;text-transform:uppercase;letter-spacing:.06em}
+header nav a:hover{color:var(--acento)}
+header .entrar{border:2px solid var(--banda-txt);padding:6px 12px;border-radius:var(--raio);color:var(--banda-txt)!important}
+@media (max-width:1180px){header nav a.entrar{display:inline-block!important}}
+@media (max-width:420px){header nav a.entrar{padding:6px 8px;font-size:.75rem}header .pedir{font-size:.75rem}}
+header .pedir,header nav a.pedir:hover{background:var(--acento);color:var(--acento-txt);padding:8px 14px;border-radius:var(--raio)}
+header nav a.pedir:hover{text-decoration:underline}
+@media (max-width:1180px){header nav a:not(.pedir){display:none}}
+
+/* escolha de estilo */
+.estilos{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.estilos .grupo{display:inline-flex;border:1.5px solid var(--banda-sub);border-radius:999px;overflow:hidden}
+.estilos button{font:700 .72rem var(--corpo);text-transform:uppercase;letter-spacing:.06em;padding:6px 10px;border:0;
+  background:transparent;color:var(--banda-txt);cursor:pointer}
+.estilos button[aria-pressed="true"]{background:var(--acento);color:var(--acento-txt)}
+.estilos .rot{font:600 .7rem var(--corpo);color:var(--banda-sub);text-transform:uppercase;letter-spacing:.08em}
+@media (max-width:520px){.estilos .rot{display:none}}
+
+/* hero */
+.parede{background:var(--hero);position:relative;overflow:hidden}
+.parede::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background-image:radial-gradient(var(--pontos) 1px,transparent 1.4px);background-size:5px 5px}
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center;padding-block:56px 64px;position:relative;z-index:1}
+.hero>div{min-width:0}
+.letreiro{font:var(--titulo-peso) clamp(2.5rem,7vw,5.4rem)/.97 var(--titulo);letter-spacing:var(--titulo-esp);color:var(--hero-txt)}
+.letreiro em{font-style:normal;color:var(--hero-destaque);display:inline-block;transform:rotate(-2deg)}
+:root[data-estilo="confianca"] .letreiro em{transform:none;font-style:italic}
+.sub{font-size:1.15rem;max-width:46ch;margin-top:20px;font-weight:500;color:var(--hero-txt)}
+.acoes{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.btn{display:inline-flex;align-items:center;gap:10px;font:800 1rem var(--corpo);text-transform:uppercase;letter-spacing:.05em;
+  padding:14px 22px;border:3px solid var(--btn);border-radius:var(--raio);text-decoration:none;cursor:pointer;background:var(--btn);color:var(--btn-txt);
+  box-shadow:5px 5px 0 var(--sombra)}
+.btn.claro{background:transparent;color:var(--hero-txt);border-color:var(--hero-txt);box-shadow:none}
+.slip .btn.claro,.resultado .btn.claro{color:var(--texto);border-color:var(--traco)}
+.btn.verde{background:var(--pedido);border-color:var(--pedido);color:var(--pedido-txt);box-shadow:5px 5px 0 var(--sombra)}
+:root[data-estilo="confianca"] .btn{box-shadow:0 6px 18px var(--sombra);text-transform:none;letter-spacing:0}
+:root[data-estilo="confianca"] .btn.claro{box-shadow:none}
+@media (prefers-reduced-motion:no-preference){.btn{transition:transform .12s,box-shadow .12s}.btn:hover{transform:translate(-2px,-2px)}}
+
+/* calculadora = talão */
+.talao{background:var(--sup);color:var(--texto);border:2px solid var(--traco);padding:22px 22px 26px;position:relative;transform:rotate(1.2deg);
+  box-shadow:8px 10px 0 var(--sombra);font-family:var(--mono);border-radius:0}
+.talao::before,.talao::after{content:"";position:absolute;left:-2px;right:-2px;height:10px;
+  background:radial-gradient(circle at 6px 0,transparent 6px,var(--sup) 6.5px) repeat-x;background-size:12px 10px}
+.talao::after{bottom:-10px;transform:scaleY(-1)} .talao::before{top:-10px}
+:root[data-estilo="confianca"] .talao{transform:none;border-radius:14px;border-width:1px;border-color:var(--linha);box-shadow:0 18px 40px var(--sombra)}
+:root[data-estilo="confianca"] .talao::before,:root[data-estilo="confianca"] .talao::after{display:none}
+.talao h2{font:var(--titulo-peso) 1.3rem/1.15 var(--titulo);margin-bottom:4px}
+.talao .mini{font:500 .75rem var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--cinza)}
+.talao label{display:grid;gap:4px;margin-top:14px;font:600 .85rem var(--corpo)}
+.talao input{font:500 1.15rem var(--mono);padding:8px 10px;border:0;border-bottom:2px dashed var(--traco);background:transparent;width:100%;color:var(--texto)}
+.talao .total{margin-top:18px;border-top:2px solid var(--traco);padding-top:12px;display:grid;gap:6px}
+.talao .lin{display:flex;justify-content:space-between;gap:12px;font-size:.9rem;font-variant-numeric:tabular-nums}
+.talao .grande{font:600 1.7rem var(--mono);color:var(--perda);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.talao .nota{font:400 .72rem var(--corpo);color:var(--cinza);margin-top:8px}
+.carimbo{position:absolute;right:-14px;top:-22px;background:var(--sup);font:700 .8rem var(--corpo);color:var(--perda);border:3px solid var(--perda);
+  padding:4px 8px;transform:rotate(-12deg);text-transform:uppercase;letter-spacing:.08em}
+:root[data-estilo="confianca"] .carimbo{display:none}
+@media (max-width:860px){.hero{grid-template-columns:1fr}.talao{transform:none}}
+
+/* secções */
+section{padding-block:64px}
+.titulo{font:var(--titulo-peso) clamp(1.9rem,4.4vw,3.1rem)/1.05 var(--titulo);letter-spacing:var(--titulo-esp);margin-bottom:14px}
+.titulo .sub-t{display:block;font:700 .85rem var(--corpo);text-transform:uppercase;letter-spacing:.14em;color:var(--ok);margin-bottom:10px}
+.intro{max-width:60ch;font-size:1.08rem;color:var(--cinza)}
+
+.encomenda{display:grid;grid-template-columns:repeat(5,1fr);margin-top:32px;border:2px solid var(--traco);background:var(--sup);border-radius:var(--raio);overflow:hidden}
+.etapa{padding:20px 18px 22px;border-right:2px dashed var(--traco);min-width:0;position:relative}
+.etapa:last-child{border-right:0}
+.etapa .n{font:var(--titulo-peso) 2.4rem/1 var(--titulo);color:var(--acento);-webkit-text-stroke:1.5px var(--traco)}
+:root[data-estilo="confianca"] .etapa .n{-webkit-text-stroke:0;color:var(--azul)}
+:root[data-estilo="confianca"] .encomenda{border-width:1px;border-color:var(--linha)}
+:root[data-estilo="confianca"] .etapa{border-right:1px solid var(--linha)}
+.etapa .onde{display:inline-block;margin-top:10px;font:700 .7rem var(--corpo);text-transform:uppercase;letter-spacing:.1em;padding:3px 7px;border:1.5px solid var(--traco);border-radius:var(--raio)}
+.etapa .onde.fab{background:var(--banda);color:var(--acento);border-color:var(--banda)}
+.etapa h3{font:800 1.1rem var(--corpo);margin:10px 0 6px;text-transform:uppercase;letter-spacing:.02em}
+.etapa p{color:var(--cinza);font-size:.95rem}
+.etapa .ico{width:30px;height:30px;position:absolute;right:16px;top:20px;color:var(--ok)}
+@media (max-width:900px){.encomenda{grid-template-columns:1fr 1fr}.etapa{border-right:0!important;border-bottom:2px dashed var(--traco)}.etapa:nth-child(odd){border-right:2px dashed var(--traco)!important}.etapa:last-child{border-bottom:0}}
+@media (max-width:520px){.encomenda{grid-template-columns:1fr}.etapa:nth-child(odd){border-right:0!important}}
+
+.preto{background:var(--banda);color:var(--banda-txt)}
+.preto .titulo{color:var(--acento)}
+.preto .titulo .sub-t{color:var(--ok-claro)}
+.preto .intro{color:var(--banda-sub)}
+.etiquetas{display:grid;grid-template-columns:repeat(3,1fr);gap:28px 24px;margin-top:36px}
+.etiqueta{background:var(--sup);color:var(--texto);padding:22px 20px 20px 26px;position:relative;min-width:0;clip-path:polygon(14px 0,100% 0,100% 100%,14px 100%,0 50%)}
+.etiqueta::before{content:"";position:absolute;left:12px;top:50%;width:9px;height:9px;border-radius:50%;background:var(--banda);transform:translateY(-50%)}
+.etiqueta:nth-child(3n+1){transform:rotate(-1.4deg)}
+.etiqueta:nth-child(3n+2){transform:rotate(.9deg);background:var(--etiqueta2);color:var(--acento-txt)}
+.etiqueta:nth-child(3n){transform:rotate(-.5deg)}
+.etiqueta h3{font:var(--titulo-peso) 1.25rem/1.1 var(--titulo);margin-left:10px}
+.etiqueta p{margin:8px 0 0 10px;font-size:.95rem;opacity:.85}
+.etiqueta .ico{width:26px;height:26px;margin:0 0 8px 10px;color:var(--perda)}
+:root[data-estilo="confianca"] .etiqueta{clip-path:none;transform:none!important;border-radius:12px;padding:22px}
+:root[data-estilo="confianca"] .etiqueta::before{display:none}
+:root[data-estilo="confianca"] .etiqueta:nth-child(3n+2){color:var(--texto)}
+:root[data-estilo="confianca"] .etiqueta h3,:root[data-estilo="confianca"] .etiqueta p,:root[data-estilo="confianca"] .etiqueta .ico{margin-left:0}
+:root[data-estilo="confianca"] .etiqueta .ico{color:var(--azul)}
+@media (max-width:860px){.etiquetas{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.etiquetas{grid-template-columns:1fr}}
+
+.prateleira{display:grid;grid-template-columns:repeat(4,1fr);margin-top:32px}
+.ramo{padding:22px 18px 26px;border-bottom:10px solid var(--ok);background:linear-gradient(var(--sup),var(--sup2));min-width:0;border-left:1px solid var(--linha)}
+.ramo:nth-child(4n+1){border-left:0}
+.ramo .ico{width:34px;height:34px;color:var(--texto)}
+.ramo h3{font:var(--titulo-peso) 1.2rem var(--titulo);margin:10px 0 6px}
+.ramo p{color:var(--cinza);font-size:.94rem}
+:root[data-estilo="confianca"] .prateleira{gap:14px}
+:root[data-estilo="confianca"] .ramo{border:1px solid var(--linha);border-top:4px solid var(--ok);border-radius:12px;background:var(--sup)}
+:root[data-estilo="confianca"] .ramo .ico{color:var(--azul)}
+@media (max-width:900px){.prateleira{grid-template-columns:1fr 1fr}.ramo:nth-child(odd){border-left:0}.ramo:nth-child(even){border-left:1px solid var(--linha)}}
+@media (max-width:480px){.prateleira{grid-template-columns:1fr}.ramo{border-left:0!important}}
+
+.razao{margin-top:32px;background-color:var(--sup);border:2px solid var(--traco);position:relative;border-radius:var(--raio);
+  background-image:linear-gradient(transparent 39px,var(--linha) 39px,var(--linha) 40px);background-size:100% 40px}
+.razao .margem{position:absolute;top:0;bottom:0;left:56px;border-left:2px solid var(--margem)}
+:root[data-estilo="confianca"] .razao{border-width:1px;border-color:var(--linha)}
+.razao-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 40px;padding:20px 24px 28px 76px}
+.razao-grid>div{min-width:0}
+.razao .cab{font:700 .78rem/40px var(--corpo);text-transform:uppercase;letter-spacing:.12em;color:var(--azul)}
+.razao .lin{display:flex;justify-content:space-between;gap:12px;font:500 1rem/40px var(--mono);font-variant-numeric:tabular-nums}
+.razao .lin b{font-weight:600}
+.razao .mal{color:var(--perda)}
+.circulo{position:relative;display:inline-block}
+.circulo svg{position:absolute;left:-14px;top:-4px;width:calc(100% + 28px);height:calc(100% + 8px);overflow:visible}
+.circulo path{stroke:var(--perda)}
+.anot{font:700 1.15rem/1.2 var(--mao);color:var(--perda);transform:rotate(-3deg);max-width:24ch;margin-top:6px}
+.barras{display:grid;gap:4px}
+.barra{display:grid;grid-template-columns:minmax(0,1fr) 120px 32px;gap:10px;align-items:center;font:500 .92rem/40px var(--corpo)}
+.barra .tr{height:14px;border:1.5px solid var(--traco);background:var(--sup)}
+.barra .en{height:100%}
+.barra b{font:600 .9rem var(--mono);text-align:right}
+.ficticio{font:700 .75rem var(--corpo);text-transform:uppercase;letter-spacing:.1em;color:var(--cinza);margin-top:12px}
+@media (max-width:820px){.razao-grid{grid-template-columns:1fr;padding-left:68px}.razao .margem{left:48px}}
+@media (max-width:420px){.barra{grid-template-columns:minmax(0,1fr) 70px 28px}}
+
+.verde-bg{background:var(--pedido);color:var(--pedido-txt)}
+.verde-bg .titulo{color:var(--pedido-txt)}
+.verde-bg .titulo .sub-t{color:var(--pedido-acento)}
+.verde-bg .intro{color:var(--pedido-sub)}
+.slip{margin-top:32px;background:var(--sup);color:var(--texto);border:2px solid var(--traco);box-shadow:10px 10px 0 var(--sombra);display:grid;gap:22px;padding:28px;border-radius:var(--raio)}
+:root[data-estilo="confianca"] .slip{border:0;box-shadow:0 24px 50px var(--sombra)}
+.slip-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:2px dashed var(--traco);padding-bottom:14px}
+.slip-top b{font:var(--titulo-peso) 1.4rem var(--titulo)}
+.slip-top span{font:500 .85rem var(--mono)}
+.campos{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.campos label{display:grid;gap:6px;font:700 .85rem var(--corpo);text-transform:uppercase;letter-spacing:.05em;min-width:0}
+input[type=text],input[type=number],input[type=email],input[type=tel],input[type=password],select{font:500 1.05rem var(--mono);padding:10px 4px;border:0;border-bottom:2px solid var(--traco);border-radius:0;background:transparent;color:var(--texto);width:100%}
+select option{background:var(--sup);color:var(--texto)}
+@media (max-width:620px){.campos{grid-template-columns:1fr}.slip{padding:20px;box-shadow:6px 6px 0 var(--sombra)}}
+.q{display:grid;grid-template-columns:2.2rem 1fr;gap:4px 10px;border-top:1px solid var(--linha);padding-top:14px;margin:0;border-left:0;border-right:0;border-bottom:0}
+.q legend{display:contents}
+.q .num{font:var(--titulo-peso) 1.2rem var(--titulo);color:var(--ok);grid-row:span 2}
+.q .txt{font-weight:700}
+.q .area{font:600 .7rem var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--cinza)}
+.ops{display:flex;gap:8px;flex-wrap:wrap;grid-column:2}
+label.op{display:inline-flex;align-items:center;gap:6px;border:2px solid var(--traco);padding:5px 12px;cursor:pointer;font:600 .9rem var(--corpo);background:var(--sup);color:var(--texto);border-radius:var(--raio)}
+label.op input{position:absolute;opacity:0;pointer-events:none}
+label.op:has(input:checked){background:var(--texto);color:var(--fundo)}
+:root[data-estilo="confianca"] label.op{border-width:1px;border-radius:999px}
+:root[data-estilo="confianca"] label.op:has(input:checked){background:var(--azul);border-color:var(--azul);color:#fff}
+.conta-estado{border:2px solid currentColor;padding:12px 14px;display:grid;gap:10px;font-weight:600}
+.conta-estado .btn{justify-self:start}
+label.op:has(input:focus-visible){outline:3px solid var(--azul);outline-offset:2px}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:.92rem;color:var(--cinza)}
+.consent input{width:20px;height:20px;accent-color:var(--ok);flex:none;margin-top:2px}
+.erro{color:var(--perda);font-weight:800}
+.resultado{border:3px solid var(--traco);background:var(--acento);color:var(--acento-txt);padding:20px;display:grid;gap:12px;border-radius:var(--raio)}
+.resultado h3{font:var(--titulo-peso) 1.35rem var(--titulo)}
+.resultado .btn.claro{color:var(--acento-txt);border-color:var(--acento-txt)}
+.codigo{font:500 .85rem var(--mono);background:var(--sup);color:var(--texto);border:2px dashed var(--traco);padding:10px;overflow-wrap:anywhere;user-select:all}
+.nota{font-size:.9rem}
+
+.manifesto{font:var(--titulo-peso) clamp(1.6rem,3.6vw,2.6rem)/1.18 var(--titulo);max-width:26ch}
+.manifesto span{background:linear-gradient(transparent 60%,var(--acento) 60%);color:inherit}
+:root[data-modo="escuro"] .manifesto span,:root[data-theme="dark"]:not([data-modo="claro"]) .manifesto span{background:none;color:var(--acento)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]):not([data-modo="claro"]) .manifesto span{background:none;color:var(--acento)}}
+.mv{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:36px}
+.mv>div{min-width:0}
+.mv h3,.valores h3{font:800 .9rem var(--corpo);text-transform:uppercase;letter-spacing:.12em;color:var(--ok);margin-bottom:8px}
+.mv p{font-size:1.08rem}
+.valores{display:grid;grid-template-columns:repeat(6,1fr);margin-top:40px;border-top:2px solid var(--traco)}
+.valores div{padding:16px 14px 0 0;min-width:0}
+.valores b{display:block;font:var(--titulo-peso) 1.1rem var(--titulo)}
+.valores p{font-size:.9rem;color:var(--cinza);margin-top:4px}
+@media (max-width:900px){.mv{grid-template-columns:1fr}.valores{grid-template-columns:1fr 1fr 1fr}}
+@media (max-width:520px){.valores{grid-template-columns:1fr 1fr}}
+
+footer{background:var(--banda);color:var(--banda-sub);padding-block:36px;font-size:.88rem}
+footer .wrap{display:grid;gap:8px}
+footer b{font:var(--titulo-peso) 1.6rem var(--titulo);color:var(--acento)}
+.ico{display:block}
+</style>
+<script src="js/supabase.js"></script>
+<script src="js/scof-nuvem.js"></script>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a class="marca" href="#inicio">SCOF</a>
+    <nav aria-label="Secções">
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#ramos">Ramos</a>
+      <a href="#exemplo">Exemplo</a>
+      <a href="#quem-somos">Quem somos</a>
+      <a class="entrar" href="caderno/">Entrar no Caderno</a>
+      <a class="pedir" href="#pedido">Fazer pedido</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<div class="parede" id="inicio">
+  <div class="wrap hero">
+    <div>
+      <h1 class="letreiro">Sabe quanto os seus clientes <em>lhe devem?</em></h1>
+      <p class="sub">O SCOF lê as contas do seu negócio, encontra onde o dinheiro está a fugir e entrega um plano para os próximos 30, 60 e 90 dias.</p>
+      <div class="acoes">
+        <a class="btn" href="#pedido">Fazer pedido</a>
+        <a class="btn claro" href="#como-funciona">Como funciona</a>
+      </div>
+    </div>
+    <form class="talao" id="calc" aria-labelledby="calc-t" novalidate>
+      <span class="mini">Faça a conta agora</span>
+      <h2 id="calc-t">Quanto custa o dinheiro parado?</h2>
+      <label for="c-valor">Os clientes devem-lhe (MZN)<input id="c-valor" type="number" min="0" step="1000" inputmode="numeric" value="250000"></label>
+      <label for="c-dias">Há quantos dias, em média?<input id="c-dias" type="number" min="0" max="3650" step="1" inputmode="numeric" value="90"></label>
+      <div class="total" aria-live="polite">
+        <div class="lin"><span>Inflação anual</span><span>4,4%</span></div>
+        <div class="lin"><span>Valor perdido até hoje</span></div>
+        <div class="grande" id="c-perda">—</div>
+        <div class="lin"><span>Perde por cada dia que passa</span><b id="c-dia">—</b></div>
+      </div>
+      <p class="nota">Inflação de Moçambique em 2025: 4,4% (Banco Mundial). Só conta a perda de valor do dinheiro; não inclui o risco de nunca receber.</p>
+      <span class="carimbo" aria-hidden="true">SCOF</span>
+    </form>
+  </div>
+</div>
+<div class="faixa" role="presentation"></div>
+
+<section id="como-funciona">
+  <div class="wrap">
+    <h2 class="titulo"><span class="sub-t">Como funciona</span>Funciona por encomenda</h2>
+    <p class="intro">Faz o pedido na montra. A fábrica prepara o diagnóstico com os seus números. Recebe o resultado numa conversa com a direcção.</p>
+    <div class="encomenda">
+      <div class="etapa"><svg class="ico" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092a10 10 0 1 0-4.777-4.719"/></svg><div class="n">1</div><span class="onde">Montra</span><h3>Pedido</h3><p>12 perguntas rápidas e o seu contacto, enviados pelo WhatsApp.</p></div>
+      <div class="etapa"><svg class="ico" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></g></svg><div class="n">2</div><span class="onde">Montra</span><h3>Caderno</h3><p>Recebe o acesso ao seu Caderno SCOF para registar o dia a dia no telemóvel.</p></div>
+      <div class="etapa"><svg class="ico" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="m8 11l2 2l4-4"/><circle cx="11" cy="11" r="8"/><path d="m21 21l-4.3-4.3"/></g></svg><div class="n">3</div><span class="onde fab">Fábrica</span><h3>Análise</h3><p>Os números do passado e as causas do presente, área a área.</p></div>
+      <div class="etapa"><svg class="ico" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5M8 18v-1m4 1v-6m4 6v-3"/></g></svg><div class="n">4</div><span class="onde">Montra</span><h3>Entrega</h3><p>Relatório em PDF e reunião com o plano a 30, 60 e 90 dias.</p></div>
+      <div class="etapa"><svg class="ico" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="m17 2l4 4l-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14M7 22l-4-4l4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></g></svg><div class="n">5</div><span class="onde fab">Montra + fábrica</span><h3>Acompanhamento</h3><p>Revisão mensal dos indicadores e do plano.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="preto" id="desafios">
+  <div class="wrap">
+    <h2 class="titulo"><span class="sub-t">O que analisamos</span>Seis problemas. Uma causa para cada.</h2>
+    <p class="intro">Os desafios mais comuns das MPMEs moçambicanas, segundo o estudo "PMEs em Moçambique: Situação e Desafios" (MIC, AHK, GIZ, 2020). Para cada um, procuramos a causa no seu negócio.</p>
+    <div class="etiquetas">
+      <div class="etiqueta"><svg class="ico" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M11 15h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 17"/><path d="m7 21l1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9M2 16l6 6"/><circle cx="16" cy="9" r="2.9"/><circle cx="6" cy="5" r="3"/></g></svg><h3>Atraso nos pagamentos</h3><p>Quem lhe deve, há quanto tempo, e que regras de crédito faltam.</p></div>
+      <div class="etiqueta"><svg class="ico" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 18v-7m1.119-8.795a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949zM14 18v-7m4 7v-7M3 22h18M6 18v-7"/></svg><h3>Acesso a financiamento</h3><p>Historial, plano de investimento e dossiê para bancos e fundos.</p></div>
+      <div class="etiqueta"><svg class="ico" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2m4 7h4m-4 5h4m-8-5h.01M8 16h.01"/></g></svg><h3>Gestão fraca</h3><p>Registos, margens, orçamento, stock e funções da equipa.</p></div>
+      <div class="etiqueta"><svg class="ico" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M13 22h5a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v3.3"/><path d="M14 2v5a1 1 0 0 0 1 1h5M7.69 16.479l1.29 4.88a.5.5 0 0 1-.698.591l-1.843-.849a1 1 0 0 0-.879.001l-1.846.85a.5.5 0 0 1-.692-.593l1.29-4.88"/><circle cx="6" cy="14" r="3"/></g></svg><h3>Informalidade</h3><p>NUIT, licenças, INSS e o regime fiscal certo para o seu volume.</p></div>
+      <div class="etiqueta"><svg class="ico" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16H8m6-8H8m8 4H8M4 3a1 1 0 0 1 1-1a1.3 1.3 0 0 1 .7.2l.933.6a1.3 1.3 0 0 0 1.4 0l.934-.6a1.3 1.3 0 0 1 1.4 0l.933.6a1.3 1.3 0 0 0 1.4 0l.933-.6a1.3 1.3 0 0 1 1.4 0l.934.6a1.3 1.3 0 0 0 1.4 0l.933-.6A1.3 1.3 0 0 1 19 2a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1a1.3 1.3 0 0 1-.7-.2l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.934.6a1.3 1.3 0 0 1-1.4 0l-.933-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-1.4 0l-.934-.6a1.3 1.3 0 0 0-1.4 0l-.933.6a1.3 1.3 0 0 1-.7.2a1 1 0 0 1-1-1z"/></svg><h3>Carga fiscal</h3><p>Impostos em dia, facturas correctas e IVA bem calculado.</p></div>
+      <div class="etiqueta"><svg class="ico" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6l-2.3 2.3a2.4 2.4 0 0 0 0 3.4ZM2 22l3-3m2.5-5.5L10 11m.5 5.5L13 14m5-11l-4 4h6l-4 4"/></svg><h3>Falta de recursos</h3><p>Energia, transporte e armazenagem: quanto custa cada paragem.</p></div>
+    </div>
+  </div>
+</section>
+<div class="faixa fina" role="presentation"></div>
+
+<section id="ramos">
+  <div class="wrap">
+    <h2 class="titulo"><span class="sub-t">Para qualquer ramo</span>Cada prateleira tem as suas regras</h2>
+    <p class="intro">O diagnóstico adapta as perguntas, as sugestões e os indicadores ao ramo do negócio.</p>
+    <div class="prateleira">
+      <div class="ramo"><svg class="ico" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M15 21v-5a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v5m8.774-10.69a1.12 1.12 0 0 0-1.549 0a2.5 2.5 0 0 1-3.451 0a1.12 1.12 0 0 0-1.548 0a2.5 2.5 0 0 1-3.452 0a1.12 1.12 0 0 0-1.549 0a2.5 2.5 0 0 1-3.77-3.248l2.889-4.184A2 2 0 0 1 7 2h10a2 2 0 0 1 1.653.873l2.895 4.192a2.5 2.5 0 0 1-3.774 3.244"/><path d="M4 10.95V19a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8.05"/></g></svg><h3>Comércio</h3><p>Nunca deixar faltar os 20 produtos mais procurados.</p></div>
+      <div class="ramo"><svg class="ico" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></g></svg><h3>Serviços</h3><p>Um nicho, prazos cumpridos e contratos mensais.</p></div>
+      <div class="ramo"><svg class="ico" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 9.536V7a4 4 0 0 1 4-4h1.5a.5.5 0 0 1 .5.5V5a4 4 0 0 1-4 4a4 4 0 0 0-4 4c0 2 1 3 1 5a5 5 0 0 1-1 3M4 9a5 5 0 0 1 8 4a5 5 0 0 1-8-4m1 12h14"/></svg><h3>Agricultura</h3><p>Transformar e embalar parte da produção; vender antes da colheita.</p></div>
+      <div class="ramo"><svg class="ico" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16h.01M16 16h.01M3 19a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.5a.5.5 0 0 0-.769-.422l-4.462 2.844A.5.5 0 0 1 15 10.5v-2a.5.5 0 0 0-.769-.422L9.77 10.922A.5.5 0 0 1 9 10.5V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2zm5-3h.01"/></svg><h3>Indústria</h3><p>Custo por unidade controlado e entregas a tempo.</p></div>
+      <div class="ramo"><svg class="ico" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20m14-7V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2zm0 0v7"/></svg><h3>Restauração</h3><p>Uma especialidade local e menos desperdício.</p></div>
+      <div class="ramo"><svg class="ico" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M10 10V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5m0-4a6 6 0 0 1 6 6v3M4 15v-3a6 6 0 0 1 6-6"/><rect width="20" height="4" x="2" y="15" rx="1"/></g></svg><h3>Construção</h3><p>Orçamentos detalhados e documentos para concursos.</p></div>
+      <div class="ramo"><svg class="ico" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2m10 0H9m10 0h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></g></svg><h3>Transporte</h3><p>Pontualidade, contratos fixos e menos viagens vazias.</p></div>
+      <div class="ramo"><svg class="ico" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594zM20 2v4m2-2h-4"/><circle cx="4" cy="20" r="2"/></g></svg><h3>Outros</h3><p>Um problema do cliente que resolve melhor do que ninguém.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="exemplo" style="padding-top:0">
+  <div class="wrap">
+    <h2 class="titulo"><span class="sub-t">Exemplo de resultado</span>Lemos as contas como um livro</h2>
+    <p class="intro">Uma página do relatório de uma mercearia inventada. Os números são fictícios.</p>
+    <div class="razao">
+      <div class="margem" aria-hidden="true"></div>
+      <div class="razao-grid">
+        <div>
+          <div class="cab">Passado · situação a 29/10/2026</div>
+          <div class="lin"><span>A receber de clientes</span><b>1 738 296</b></div>
+          <div class="lin"><span>Vencido há +90 dias</span><b class="mal"><span class="circulo">796 101<svg viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true"><path d="M8 22 C 6 6, 90 2, 95 18 S 40 40, 6 26" fill="none" stroke-width="2.4" stroke-linecap="round"/></svg></span></b></div>
+          <div class="lin"><span>A pagar a fornecedores</span><b>631 650</b></div>
+          <div class="lin"><span>Recebe aos / paga aos</span><b class="mal">69 / 48 dias</b></div>
+          <p class="anot">Paga aos fornecedores 21 dias antes de receber dos clientes, e 46% do que lhe devem está atrasado há mais de 3 meses. Está a financiar os clientes!</p>
+        </div>
+        <div>
+          <div class="cab">Presente · pontuação por área (0 a 100)</div>
+          <div class="barras" id="barras"></div>
+        </div>
+      </div>
+    </div>
+    <p class="ficticio">Empresa e números inventados, só para demonstração. Valores em MZN.</p>
+  </div>
+</section>
+
+<section class="verde-bg" id="pedido">
+  <div class="wrap">
+    <h2 class="titulo"><span class="sub-t">Fazer pedido</span>Pré-diagnóstico em 3 minutos</h2>
+    <p class="intro">Responda com sinceridade e deixe um contacto. Depois de confirmarmos o pedido, recebe no email ou no WhatsApp o acesso ao seu Caderno SCOF. Nada é enviado antes de carregar no botão.</p>
+    <form class="slip" id="form" novalidate>
+      <div class="slip-top"><b>Talão de pedido</b><span id="data-hoje"></span></div>
+      <div class="campos">
+        <label for="ramo">Ramo de actividade
+          <select id="ramo">
+            <option value="com">Mercearia, loja ou banca de mercado</option>
+            <option value="com">Grossista ou distribuidor</option>
+            <option value="ser">Salão, barbearia ou estética</option>
+            <option value="ser">Oficina (auto, motas, electrónica)</option>
+            <option value="ser">Alfaiataria, costura ou calçado</option>
+            <option value="res">Restaurante, barraca de comida ou take-away</option>
+            <option value="res">Alojamento, hotelaria ou turismo</option>
+            <option value="agr">Machamba, criação de animais ou pesca</option>
+            <option value="agr">Moagem e agro-processamento</option>
+            <option value="con">Construção, serralharia ou carpintaria</option>
+            <option value="tra">Transporte (chapa, txopela, mota-táxi, carga)</option>
+            <option value="ser">Explicações, escolinha ou formação</option>
+            <option value="ser">Clínica, consultório ou farmácia</option>
+            <option value="ser">Papelaria, cópias e serviços digitais</option>
+            <option value="ind">Indústria ou fábrica</option>
+            <option value="out">Outro</option>
+          </select></label>
+        <label for="empresa">Nome do negócio<input type="text" id="empresa" maxlength="80" autocomplete="organization" placeholder="Ex.: Mercearia Boa Esperança"></label>
+        <label for="trab">Nº de trabalhadores<input type="number" id="trab" min="0" max="5000" step="1" inputmode="numeric" placeholder="Ex.: 6"></label>
+        <label for="vol">Vendas por ano (MT)<input type="number" id="vol" min="0" step="1000" inputmode="numeric" placeholder="Ex.: 2500000"></label>
+        <label for="email">Email (para receber o acesso)<input type="email" id="email" maxlength="80" autocomplete="email" placeholder="nome@exemplo.com"></label>
+        <label for="wa">WhatsApp (para receber o acesso)<input type="tel" id="wa" maxlength="16" inputmode="tel" autocomplete="tel" placeholder="84 000 0000"></label>
+        <label for="senha" class="so-nuvem" hidden>Palavra-passe da sua conta<input type="password" id="senha" maxlength="72" autocomplete="new-password" placeholder="Mín. 8, com letras e números"></label>
+        <label for="senha2" class="so-nuvem" hidden>Repita a palavra-passe<input type="password" id="senha2" maxlength="72" autocomplete="new-password"></label>
+      </div>
+      <div id="perguntas" style="display:grid;gap:14px"></div>
+      <label class="consent" for="aceito"><input type="checkbox" id="aceito"> Autorizo o SCOF a usar estas respostas só para preparar a proposta de diagnóstico. Não partilhamos os dados com terceiros.</label>
+      <div><button class="btn verde" type="submit">Ver resultado e preparar pedido</button></div>
+      <p class="erro" id="erro" hidden></p>
+      <div class="resultado" id="resultado" hidden>
+        <h3 id="res-titulo"></h3>
+        <p id="res-texto" class="nota"></p>
+        <div id="conta-estado" class="conta-estado" role="status" hidden></div>
+        <div id="wa-bloco"></div>
+        <p class="nota">Código do pedido (vai na mensagem):</p>
+        <div class="codigo" id="codigo"></div>
+        <div><button class="btn claro" type="button" id="copiar">Copiar mensagem</button></div>
+      </div>
+    </form>
+  </div>
+</section>
+<div class="faixa" role="presentation"></div>
+
+<section id="quem-somos">
+  <div class="wrap">
+    <h2 class="titulo"><span class="sub-t">Quem somos</span></h2>
+    <p class="manifesto">Sistema de <span>Controlo Operacional e Financeiro</span></p>
+    <div class="mv">
+      <div><h3>Missão</h3><p>Ajudar micro, pequenas e médias empresas moçambicanas a conhecer os seus números, perceber o que trava o crescimento e agir com um plano claro.</p></div>
+      <div><h3>Visão</h3><p>Ser a referência em Moçambique em diagnóstico e acompanhamento de gestão acessível para pequenos negócios, por empresas mais formais, financiáveis e competitivas.</p></div>
+    </div>
+    <div class="valores">
+      <div><b>Rigor</b><p>Conclusões só com números verificados.</p></div>
+      <div><b>Clareza</b><p>Linguagem que o dono do negócio usa.</p></div>
+      <div><b>Sigilo</b><p>Os dados do cliente são do cliente.</p></div>
+      <div><b>Ética</b><p>Não prometemos o que a lei reserva a outros.</p></div>
+      <div><b>Proximidade</b><p>Acompanhamos depois do relatório.</p></div>
+      <div><b>Aprender</b><p>Leis, normas e métodos em dia.</p></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <b>SCOF</b>
+    <p>Sistema de Controlo Operacional e Financeiro · Maputo, Moçambique</p>
+    <p>Análise de gestão para apoio à decisão. Não constitui parecer de auditoria nem substitui a contabilidade certificada.</p>
+    <p>Números de exemplo fictícios. Ícones: Lucide (licença ISC), via Iconify. Inflação: Banco Mundial (FP.CPI.TOTL.ZG).</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // Número de WhatsApp Business do SCOF, só dígitos com o indicativo 258 (ex.: "25884XXXXXXX").
+  var WHATSAPP = "";
+  var NOMES_EX=["Mercearia Boa Esperança","Armazém Nkomati Comercial","Salão Mamana Beleza","Oficina Auto Mabote","Alfaiataria Capulana Chic","Restaurante Sabor a Matapa","Condomínio Xiluva","Machamba Ntsako","Moagem Kanimambo","Serralharia Força Unida","Transportes Tsakane","Centro de Explicações Saber Mais","Farmácia Vida Nova","Reprografia Luz Digital","Fábrica de Blocos Unidade","O nome do seu negócio"];
+  (function(){var s=document.getElementById("ramo"),e=document.getElementById("empresa");if(!s||!e)return;
+    function m(){var n=NOMES_EX[s.selectedIndex]||NOMES_EX[0];e.placeholder=/^O nome/.test(n)?n:"Ex.: "+n}
+    s.addEventListener("change",m);m()})();
+  var INFLACAO = 0.0437; // Moçambique 2025, Banco Mundial
+
+
+  function mzn(v){return String(Math.round(v)).replace(/\B(?=(\d{3})+(?!\d))/g," ")+" MZN"}
+
+  // Calculadora do talão
+  var cv=document.getElementById("c-valor"), cd=document.getElementById("c-dias");
+  function calc(){
+    var v=Math.max(0,parseFloat(cv.value)||0), d=Math.max(0,parseFloat(cd.value)||0);
+    document.getElementById("c-perda").textContent=mzn(v*INFLACAO*d/365);
+    document.getElementById("c-dia").textContent=mzn(v*INFLACAO/365);
+  }
+  cv.addEventListener("input",calc);cd.addEventListener("input",calc);calc();
+  document.getElementById("calc").addEventListener("submit",function(e){e.preventDefault()});
+
+  var hoje=new Date();
+  document.getElementById("data-hoje").textContent="Maputo, "+hoje.toLocaleDateString("pt-PT");
+
+  var PERGUNTAS=[
+    {id:"f1",area:"Formalização",t:"A empresa (ou o dono) tem NUIT e a actividade está registada ou licenciada?"},
+    {id:"r1",area:"Registos",t:"O dinheiro do negócio está separado do dinheiro pessoal ou familiar?"},
+    {id:"r2",area:"Registos",t:"Regista todos os dias as vendas e as despesas (caderno, Excel ou aplicação)?"},
+    {id:"t1",area:"Tesouraria",t:"Sabe quanto os clientes lhe devem e há quanto tempo?"},
+    {id:"t2",area:"Tesouraria",t:"Tem regras de crédito a clientes (quem pode comprar a crédito, quanto e por quanto tempo)?"},
+    {id:"c1",area:"Financiamento",t:"Consegue mostrar a um banco 6 a 12 meses de vendas e despesas registadas?"},
+    {id:"i1",area:"Impostos",t:"Os impostos e declarações estão em dia?"},
+    {id:"o2",area:"Stock",t:"Raramente fica sem os produtos mais procurados?"},
+    {id:"e1",area:"Recursos",t:"Tem alternativa quando falta energia, água ou transporte?"},
+    {id:"p1",area:"Pessoas",t:"Cada pessoa sabe exactamente as suas tarefas?"},
+    {id:"m3",area:"Mercado",t:"Tem algo que o distingue claramente da concorrência?"},
+    {id:"d1",area:"Digital",t:"Aceita pagamentos por carteira móvel, transferência ou POS?"}
+  ];
+  var OPCOES=[["S","Sim"],["P","Em parte"],["N","Não"],["X","Não se aplica"]];
+  var EXEMPLO=[["Formalização",33],["Registos",30],["Tesouraria",12],["Impostos",70],["Mercado",24],["Digital",67]];
+
+  function cor(v){return v<40?"var(--perda)":v<70?"var(--acento)":"var(--ok)"}
+  var barras=document.getElementById("barras");
+  EXEMPLO.forEach(function(e){
+    var d=document.createElement("div");d.className="barra";
+    var n=document.createElement("span");n.textContent=e[0];
+    var tr=document.createElement("div");tr.className="tr";
+    var en=document.createElement("div");en.className="en";en.style.width=e[1]+"%";en.style.background=cor(e[1]);
+    tr.appendChild(en);var b=document.createElement("b");b.textContent=e[1];
+    d.appendChild(n);d.appendChild(tr);d.appendChild(b);barras.appendChild(d);
+  });
+
+  var caixa=document.getElementById("perguntas");
+  PERGUNTAS.forEach(function(q,i){
+    var w=document.createElement("fieldset");w.className="q";
+    var lg=document.createElement("legend");
+    var num=document.createElement("span");num.className="num";num.textContent=String(i+1).padStart(2,"0");
+    var a=document.createElement("span");a.className="area";a.textContent=q.area;
+    var t=document.createElement("span");t.className="txt";t.textContent=q.t;
+    lg.appendChild(num);lg.appendChild(a);lg.appendChild(t);w.appendChild(lg);
+    var ops=document.createElement("div");ops.className="ops";
+    OPCOES.forEach(function(o){
+      var l=document.createElement("label");l.className="op";
+      var inp=document.createElement("input");inp.type="radio";inp.name=q.id;inp.value=o[0];inp.id=q.id+"_"+o[0];
+      l.appendChild(inp);l.appendChild(document.createTextNode(o[1]));ops.appendChild(l);
+    });
+    w.appendChild(ops);caixa.appendChild(w);
+  });
+
+  var N=window.SCOF_NUVEM||null,aEnviar=false;
+  var AGENDA_RAMO=[0,0,1,1,1,1,1,0,0,1,0,1,1,0,0,0];
+  if(N){
+    document.querySelectorAll(".so-nuvem").forEach(function(x){x.hidden=false});
+    document.querySelector('label[for="email"]').firstChild.textContent="Email (será o login da sua conta)";
+    document.querySelector('label[for="wa"]').firstChild.textContent="WhatsApp (opcional)";
+    var bEnv=document.querySelector('#form button[type=submit]');if(bEnv)bEnv.textContent="Criar conta e enviar pedido";
+  }
+  function limpa(s,max){return String(s||"").replace(/[|\n\r\t]/g," ").replace(/[<>]/g,"").trim().slice(0,max)}
+  var form=document.getElementById("form"),erro=document.getElementById("erro"),res=document.getElementById("resultado"),mensagem="";
+  form.addEventListener("submit",function(ev){
+    ev.preventDefault();erro.hidden=true;
+    var respostas=[],nao=0,parte=0,falta=[];
+    PERGUNTAS.forEach(function(q){
+      var m=form.querySelector('input[name="'+q.id+'"]:checked');
+      if(m){respostas.push(q.id+m.value);if(m.value==="N"){nao++;falta.push(q.area)}if(m.value==="P")parte++;}
+    });
+    if(respostas.length<8){erro.textContent="Responda a pelo menos 8 das 12 perguntas.";erro.hidden=false;return;}
+    if(!document.getElementById("aceito").checked){erro.textContent="Marque a autorização para podermos usar as respostas.";erro.hidden=false;return;}
+    var empresa=limpa(document.getElementById("empresa").value,80);
+    var ramo=document.getElementById("ramo").value;
+    var trab=parseInt(document.getElementById("trab").value,10),vol=parseInt(document.getElementById("vol").value,10);
+    var email=limpa(document.getElementById("email").value,80).replace(/\s/g,""),wa=document.getElementById("wa").value.replace(/[^\d+]/g,"").slice(0,16);
+    var emailOk=/^[^@\s|;]+@[^@\s|;]+\.[a-z]{2,}$/i.test(email),waOk=wa.replace(/\D/g,"").length>=9;
+    if(!emailOk&&!waOk){erro.textContent="Deixe um email válido ou um número de WhatsApp para receber o acesso ao seu Caderno.";erro.hidden=false;return;}
+    var senha="";
+    if(N){
+      if(aEnviar)return;
+      senha=document.getElementById("senha").value;var senha2=document.getElementById("senha2").value;
+      function falha(t){erro.textContent=t;erro.hidden=false}
+      if(empresa.length<2)return falha("Escreva o nome do negócio.");
+      if(!emailOk)return falha("Para criar a conta precisa de um email válido. Ele será o seu login.");
+      if(senha.length<8||!/[A-Za-z]/.test(senha)||!/\d/.test(senha))return falha("A palavra-passe precisa de pelo menos 8 caracteres, com letras e números.");
+      if(senha!==senha2)return falha("As duas palavras-passe não são iguais.");
+    }
+    var contacto=[emailOk?email:"",waOk?wa:""].filter(Boolean).join(",");
+    var cod="SCOF1|R="+ramo+(isFinite(trab)&&trab>=0?"|T="+trab:"")+(isFinite(vol)&&vol>=0?"|V="+vol:"")+"|A="+respostas.join(",")+"|C="+contacto+(empresa?"|E="+empresa:"");
+    document.getElementById("res-titulo").textContent=nao>=4?"Há várias áreas a precisar de atenção":nao>=1||parte>=4?"Bom ponto de partida, com pontos a melhorar":"Base sólida: o diagnóstico vai afinar os detalhes";
+    var unicos=falta.filter(function(x,i){return falta.indexOf(x)===i});
+    document.getElementById("res-texto").textContent=(unicos.length?"Áreas com resposta “Não”: "+unicos.join(", ")+". ":"")+"Este é só um pré-resultado. Depois de confirmarmos o pedido, enviamos para "+contacto.replace(","," e ")+" o acesso ao seu Caderno SCOF.";
+    mensagem="Olá SCOF! Quero um diagnóstico"+(empresa?" para "+empresa:"")+".\n"+cod;
+    document.getElementById("codigo").textContent=cod;
+    var bloco=document.getElementById("wa-bloco");bloco.textContent="";
+    if(/^\d{9,15}$/.test(WHATSAPP)){
+      var a=document.createElement("a");a.className="btn";a.target="_blank";a.rel="noopener";
+      a.href="https://wa.me/"+WHATSAPP+"?text="+encodeURIComponent(mensagem);a.textContent="Enviar pelo WhatsApp";bloco.appendChild(a);
+    }else{
+      var p=document.createElement("p");p.className="nota";p.textContent="O número de WhatsApp do SCOF ainda está a ser configurado. Copie a mensagem e guarde-a.";bloco.appendChild(p);
+    }
+    res.hidden=false;res.scrollIntoView({behavior:"smooth",block:"start"});
+    if(N){
+      var sel=document.getElementById("ramo"),ramoTxt=sel.options[sel.selectedIndex].text;
+      var pedido={nome:empresa,ramo:ramoTxt,ramo_codigo:ramo,trabalhadores:isFinite(trab)&&trab>=0?trab:null,vendas_ano:isFinite(vol)&&vol>=0?vol:null,
+        whatsapp:waOk?wa:null,codigo:cod,consentimento:true,agenda:!!AGENDA_RAMO[sel.selectedIndex]};
+      document.getElementById("res-texto").textContent=(unicos.length?"Áreas com resposta “Não”: "+unicos.join(", ")+". ":"")+"Este é só um pré-resultado; o diagnóstico completo vem depois.";
+      var est=document.getElementById("conta-estado"),bEnv2=form.querySelector('button[type=submit]');
+      est.hidden=false;est.textContent="A criar a sua conta...";aEnviar=true;bEnv2.disabled=true;
+      var urlCaderno=new URL("caderno/",location.href.split("#")[0].replace(/[^/]*$/,"")).href;
+      N.criarConta(email,senha,pedido,urlCaderno).then(function(r){
+        if(r.sessao)return N.criarEmpresaDoPedido(r.utilizador).then(function(){return r});
+        return r;
+      }).then(function(r){
+        est.textContent="";
+        est.appendChild(document.createTextNode(r.sessao?"Conta criada e pedido registado. O SCOF vai confirmar o pedido e activar o seu Caderno; avisamos por email"+(waOk?" ou WhatsApp":"")+".":"Conta criada. Enviámos um email para "+email+": abra-o e carregue no link para confirmar. Depois entre no Caderno."));
+        var a=document.createElement("a");a.className="btn";a.href=urlCaderno;a.textContent="Abrir o meu Caderno";est.appendChild(a);
+        document.getElementById("senha").value="";document.getElementById("senha2").value="";
+      }).catch(function(e){
+        est.textContent=N.erroPT(e);aEnviar=false;bEnv2.disabled=false;
+      });
+    }
+  });
+  document.getElementById("copiar").addEventListener("click",function(){
+    var btn=this;
+    function ok(){btn.textContent="Mensagem copiada";setTimeout(function(){btn.textContent="Copiar mensagem"},2000)}
+    function fallback(){var r=document.createRange();r.selectNodeContents(document.getElementById("codigo"));var s=getSelection();s.removeAllRanges();s.addRange(r);btn.textContent="Seleccionado: use Copiar";}
+    try{navigator.clipboard.writeText(mensagem).then(ok,fallback)}catch(e){fallback()}
+  });
+})();
+</script>
+</body>
+</html>
