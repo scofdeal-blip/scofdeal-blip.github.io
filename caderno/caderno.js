@@ -543,24 +543,36 @@
   }
 
   // ---------- ecrãs da conta ----------
+  function erroContaPT(e){
+    var m=String((e&&(e.message||e.msg))||e||""),c=String((e&&(e.code||e.error_code))||"");
+    if(/otp_expired|token has expired or is invalid|invalid.*otp/i.test(m+" "+c))return "O código está errado ou já expirou. Confira o último email do SCOF ou peça um código novo.";
+    if(/bad_jwt|malformed/i.test(m+" "+c))return "A ligação à sua conta foi recusada neste aparelho. Saia da conta e tente outra vez; se continuar, fale connosco pelo WhatsApp.";
+    if(/same_password|should be different/i.test(m+" "+c))return "A palavra-passe nova tem de ser diferente da antiga.";
+    return N.erroPT(e);
+  }
   var modoConta="entrar";
   function mostrarConta(modo,nota){
     modoConta=modo;["boas","pin","app","espera"].forEach(function(x){document.getElementById(x).hidden=true});
     document.getElementById("conta").hidden=false;document.getElementById("trancar").hidden=true;
-    var tit={entrar:"Entrar no Caderno",recuperar:"Recuperar a palavra-passe",nova:"Escolha uma palavra-passe nova"}[modo];
+    var tit={entrar:"Entrar no Caderno",recuperar:"Recuperar a palavra-passe",codigo:"Escreva o código do email",nova:"Escolha uma palavra-passe nova"}[modo];
     document.getElementById("conta-titulo").textContent=tit;
     document.getElementById("conta-nota").textContent=nota||(modo==="entrar"?"Use o email e a palavra-passe que criou ao fazer o pedido na montra.":
-      modo==="recuperar"?"Escreva o email da sua conta. Enviamos um link para escolher uma palavra-passe nova.":"Pelo menos 8 caracteres, com letras e números.");
+      modo==="recuperar"?"Escreva o email da sua conta. Enviamos um código de 6 números para escolher uma palavra-passe nova.":
+      modo==="codigo"?"Abra o email do SCOF (veja também o spam), escreva o código e escolha a palavra-passe nova: pelo menos 8 caracteres, com letras e números.":
+      "Pelo menos 8 caracteres, com letras e números.");
     document.getElementById("c-email-l").hidden=modo==="nova";
+    var novaSenha=modo==="nova"||modo==="codigo";
+    document.getElementById("c-codigo-l").hidden=modo!=="codigo";
     document.getElementById("c-senha-l").hidden=modo==="recuperar";
-    document.getElementById("c-senha2-l").hidden=modo!=="nova";
-    document.getElementById("c-senha-txt").textContent=modo==="nova"?"Palavra-passe nova":"Palavra-passe";
-    document.getElementById("c-senha").autocomplete=modo==="nova"?"new-password":"current-password";
-    document.getElementById("c-ok").textContent=modo==="entrar"?"Entrar":modo==="recuperar"?"Enviar link":"Guardar palavra-passe";
-    document.getElementById("c-esqueci").hidden=modo!=="entrar";document.getElementById("c-voltar").hidden=modo!=="recuperar";
+    document.getElementById("c-senha2-l").hidden=!novaSenha;
+    document.getElementById("c-senha-txt").textContent=novaSenha?"Palavra-passe nova":"Palavra-passe";
+    document.getElementById("c-senha").autocomplete=novaSenha?"new-password":"current-password";
+    document.getElementById("c-ok").textContent=modo==="entrar"?"Entrar":modo==="recuperar"?"Enviar código":"Guardar palavra-passe";
+    document.getElementById("c-esqueci").hidden=modo!=="entrar";document.getElementById("c-voltar").hidden=modo!=="recuperar"&&modo!=="codigo";
+    document.getElementById("c-tenho-codigo").hidden=modo!=="recuperar";
     document.getElementById("c-sem-conta").hidden=modo!=="entrar";
     document.getElementById("c-ok").disabled=false;erroConta("");
-    ["c-senha","c-senha2"].forEach(function(x){document.getElementById(x).value=""});
+    ["c-senha","c-senha2","c-codigo"].forEach(function(x){document.getElementById(x).value=""});
   }
   function erroConta(t){var e=document.getElementById("c-erro");e.textContent=t;e.hidden=!t}
   function mostrarEspera(titulo,texto,comBotoes){
@@ -592,20 +604,35 @@
       var email=document.getElementById("c-email").value.trim(),s1=document.getElementById("c-senha").value,s2=document.getElementById("c-senha2").value;
       if(modoConta!=="nova"&&!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(email))return erroConta("Escreva o email da sua conta.");
       if(modoConta==="entrar"&&!s1)return erroConta("Escreva a palavra-passe.");
-      if(modoConta==="nova"){
+      var codigo=document.getElementById("c-codigo").value.replace(/\D/g,"");
+      if(modoConta==="codigo"&&!/^\d{6,10}$/.test(codigo))return erroConta("Escreva o código de 6 números que recebeu no email.");
+      if(modoConta==="nova"||modoConta==="codigo"){
         if(s1.length<8||!/[A-Za-z]/.test(s1)||!/\d/.test(s1))return erroConta("Pelo menos 8 caracteres, com letras e números.");
         if(s1!==s2)return erroConta("As duas palavras-passe não são iguais.");
       }
       ok.disabled=true;erroConta(modoConta==="entrar"?"A entrar...":"Um momento...");
       var accao=modoConta==="entrar"?N.entrar(email,s1).then(function(s){return depoisDeEntrar(s.user)}):
-        modoConta==="recuperar"?N.recuperar(email,location.href.split("#")[0]).then(function(){mostrarConta("entrar","Se o email tiver conta, enviámos um link para escolher uma palavra-passe nova. Veja também o spam.")}):
+        modoConta==="recuperar"?N.recuperar(email,location.href.split("#")[0]).then(function(){mostrarConta("codigo");document.getElementById("c-email").value=email}):
+        modoConta==="codigo"?N.sb.auth.verifyOtp({email:email,token:codigo,type:"recovery"}).then(function(r){
+          if(r.error)throw r.error;
+          return N.novaSenha(s1).then(function(){return depoisDeEntrar(r.data.user||r.data.session.user)});
+        }):
         N.novaSenha(s1).then(function(){return N.sessao()}).then(function(s){return s?depoisDeEntrar(s.user):mostrarConta("entrar","Palavra-passe guardada. Entre com ela.")});
-      accao.catch(function(e){ok.disabled=false;erroConta(N.erroPT(e))});
+      accao.catch(function(e){ok.disabled=false;erroConta(erroContaPT(e))});
     });
     document.getElementById("c-esqueci").addEventListener("click",function(){mostrarConta("recuperar")});
     document.getElementById("c-voltar").addEventListener("click",function(){mostrarConta("entrar")});
+    document.getElementById("c-tenho-codigo").addEventListener("click",function(){var e=document.getElementById("c-email").value;mostrarConta("codigo");document.getElementById("c-email").value=e});
+    document.getElementById("c-codigo").addEventListener("input",function(){var c=this,v=c.value.replace(/\D/g,"").slice(0,10);if(v!==c.value)c.value=v});
     document.getElementById("espera-ver").addEventListener("click",function(){N.sessao().then(function(s){s?depoisDeEntrar(s.user):mostrarConta("entrar")})});
-    function sairConta(){fila.then(function(){return N.sair()}).then(function(){conta=null;chave=null;dados=prepararDados(null);try{location.reload()}catch(e){mostrarConta("entrar")}})}
+    // Sair tem de funcionar sempre, mesmo que a Supabase recuse a sessão (ex.: sessão estragada ou expirada).
+    function limparSessaoLocal(){try{Object.keys(localStorage).forEach(function(k){if(k.indexOf("scof-sessao")===0)localStorage.removeItem(k)})}catch(e){}}
+    function sairConta(){
+      fila.catch(function(){}).then(function(){return N.sair()}).catch(function(){}).then(function(){
+        limparSessaoLocal();conta=null;chave=null;dados=prepararDados(null);
+        try{location.reload()}catch(e){mostrarConta("entrar")}
+      });
+    }
     document.getElementById("espera-sair").addEventListener("click",sairConta);
     document.getElementById("sair-conta").addEventListener("click",sairConta);
     document.getElementById("envio-nota").textContent="Os seus registos já seguem sozinhos para a sua conta SCOF. Estes dados servem só se precisar de os copiar.";
@@ -615,11 +642,15 @@
   // ---------- arranque ----------
   if(N){
     var recuperacao=!!N.veioRecuperar;
+    var erroLink=/error_code=|error=/.test(location.hash||"")?decodeURIComponent((location.hash.match(/error_description=([^&]*)/)||[,""])[1].replace(/\+/g," ")):"";
     N.aoMudarConta(function(ev){if(ev==="PASSWORD_RECOVERY")mostrarConta("nova")});
     mostrarEspera("A abrir...","",false);
     N.sessao().then(function(s){
       if(location.hash&&/access_token|type=/.test(location.hash))try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}
+      if(erroLink){try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}
+        return mostrarConta("recuperar","Este link já foi usado ou expirou. Escreva o seu email e peça um código novo.")}
       if(recuperacao&&s)return mostrarConta("nova");
+      if(recuperacao&&!s)return mostrarConta("recuperar","O link não funcionou neste aparelho. Escreva o seu email e peça um código novo.");
       return s?depoisDeEntrar(s.user):mostrarConta("entrar");
     }).catch(function(){mostrarConta("entrar")});
   }else{

@@ -179,12 +179,14 @@ details.ajuda ol{margin:8px 0 0;padding-left:20px;font-size:.92rem;display:grid;
     <p class="nota" id="conta-nota">Use o email e a palavra-passe que criou ao fazer o pedido na montra.</p>
     <div class="campos">
       <label for="c-email" class="largo" id="c-email-l">Email<input id="c-email" type="email" autocomplete="username" maxlength="80"></label>
+      <label for="c-codigo" class="largo" id="c-codigo-l" hidden>Código do email<input id="c-codigo" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="6 números"></label>
       <label for="c-senha" class="largo" id="c-senha-l"><span id="c-senha-txt">Palavra-passe</span><input id="c-senha" type="password" autocomplete="current-password" maxlength="72"></label>
       <label for="c-senha2" class="largo" id="c-senha2-l" hidden>Repita a palavra-passe<input id="c-senha2" type="password" autocomplete="new-password" maxlength="72"></label>
     </div>
     <p class="erro" id="c-erro" role="alert" hidden></p>
     <div class="acoes"><button class="btn" type="submit" id="c-ok">Entrar</button><button class="btn claro" type="button" id="c-voltar" hidden>Voltar</button></div>
     <button class="link" type="button" id="c-esqueci">Esqueci a palavra-passe</button>
+    <button class="link" type="button" id="c-tenho-codigo" hidden>Já recebi um código</button>
     <p class="nota" id="c-sem-conta">Ainda não tem conta? <a href="../#pedido">Faça o pedido na montra</a>.</p>
   </form>
 
@@ -340,6 +342,6 @@ details.ajuda ol{margin:8px 0 0;padding-left:20px;font-size:.92rem;display:grid;
 </main>
 <footer><div class="wrap">Caderno SCOF · protótipo · Sistema de Controlo Operacional e Financeiro. Os dados ficam cifrados neste aparelho com o seu PIN. Registo de gestão do próprio negócio; não substitui a contabilidade organizada nem as obrigações fiscais.</div></footer>
 
-<script src="caderno.js?v=013f645b"></script>
+<script src="caderno.js?v=16161723"></script>
 </body>
 </html>
