@@ -68,17 +68,13 @@
         return { empresa: d[0].empresas, papel: d[0].papel };
       });
   }
-  // Na primeira entrada, cria a empresa com os dados do pedido feito na montra.
-  function criarEmpresaDoPedido(utilizador) {
-    var p = utilizador && utilizador.user_metadata && utilizador.user_metadata.pedido;
-    if (!p || !p.nome) return Promise.resolve(null);
-    return sb.rpc("criar_empresa", {
-      p_nome: p.nome, p_ramo: p.ramo, p_ramo_codigo: p.ramo_codigo,
-      p_trabalhadores: p.trabalhadores == null ? null : p.trabalhadores,
-      p_vendas_ano: p.vendas_ano == null ? null : p.vendas_ano,
-      p_email: utilizador.email, p_whatsapp: p.whatsapp || null,
-      p_codigo_pedido: p.codigo, p_consentimento: !!p.consentimento, p_usa_agenda: !!p.agenda
-    }).then(lancar);
+  // Na primeira entrada, cria a empresa com o pedido feito na montra.
+  // O pedido fica na tabela pedidos_pendentes e não dentro da conta (supabase/06): dentro da conta estragava a sessão.
+  function criarEmpresaDoPedido() {
+    return sb.rpc("criar_empresa_pendente").then(function (r) {
+      var d = lancar(r);
+      return d && d.length ? d : null;
+    });
   }
   function actualizarPerfil(eid, nome, agenda) {
     return sb.rpc("actualizar_perfil", { p_empresa: eid, p_nome: nome, p_usa_agenda: agenda }).then(lancar);
